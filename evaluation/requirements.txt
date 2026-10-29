@@ -1,0 +1,11 @@
+# Evaluation dependencies (the PRESET package itself: pip install . from the repository root)
+numpy>=2.0
+pandas>=2.2
+scipy>=1.14
+statsmodels>=0.14
+joblib>=1.4
+pyarrow>=15
+matplotlib>=3.9
+requests>=2.31     # analysis/data_prep/tcga_download.py
+h5py>=3.10         # only for training/cohorts.py (BulkFormer cardiovascular collection)
+# pydeseq2==0.5.2  # only with TXDE_DESEQ2=py (not used for the paper)

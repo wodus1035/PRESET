@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.egg-info/
+build/
+dist/
+.venv/
+# evaluation: downloaded data, results and generated figures stay local
+evaluation/results/
+evaluation/output/
+evaluation/data/*
+!evaluation/data/README.md
+!evaluation/data/download.sh
+evaluation/data_cache/gmt/KEGG_2021_Human.gmt
+# training: built banks and checkpoints stay local
+training/data/
+outputs/

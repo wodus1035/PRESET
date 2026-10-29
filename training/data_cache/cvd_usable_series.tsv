@@ -1,0 +1,20 @@
+gse1	label	n_case	n_ctrl	frac_int	lib_M	platform	counts_ok
+GSE141910	Dilated Cardiomyopathy	163	155	1.0	31.993175	GPL16791	True
+GSE165303	Dilated Cardiomyopathy	50	51	1.0	38.50437	GPL20795	True
+GSE120852	Heart Failure	20	10	1.0	7.969919	GPL16791	True
+GSE92506	Atherosclerosis	16	8	1.0	45.150351	GPL15433	True
+GSE166780	Coronary Artery Disease	16	8	1.0	16.0171845	GPL20795	True
+GSE106520	Intracranial Aneurysm	16	16	1.0	35.129334	GPL16791	True
+GSE218276	Cardiomyopathy	14	44	1.0	17.527138	GPL24676	True
+GSE89843	Atherosclerosis	11	228	1.0	4.159242	GPL16791	True
+GSE154377	Hypertension	10	43	1.0	2.529694	GPL20301	True
+GSE194388	Myocardial Infarction	10	5	1.0	9.9009	GPL24676	True
+GSE183216	Dilated Cardiomyopathy	9	9	1.0	38.766978	GPL20301	True
+GSE159657	Coronary Artery Disease	8	10	1.0	7.046305	GPL24676	True
+GSE120836	Dilated Cardiomyopathy	5	5	1.0	20.608899	GPL20301	True
+GSE89714	Hypertrophic Cardiomyopathy	5	4	1.0	8.857685	GPL11154	True
+GSE175764	Heart Failure	5	5	1.0	25.34526	GPL18573	True
+GSE115621	Cardiomyopathy	4	4	1.0	2.0021965	GPL16791	True
+GSE144932	Pulmonary Arterial Hypertension	4	4	1.0	71.810395	GPL18573	True
+GSE158558	Intracranial Aneurysm	4	4	1.0	16.6239525	GPL20301	True
+GSE84538	Pulmonary Arterial Hypertension	4	4	1.0	26.572002	GPL21290	True
