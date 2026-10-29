@@ -2,7 +2,7 @@
 
 **Differential expression with a prior learned across RNA-seq experiments.**
 
-PRESET is a prior-fitted network for two-group bulk RNA-seq experiments with few samples. It was trained once on simulated experiments, real GTEx backgrounds with planted effects, and real two-group cohorts with labels from held-out samples. Given a new dataset, it returns a posterior for every gene in a single forward pass, without fitting a model to that dataset.
+PRESET is a prior-fitted network for two-group bulk RNA-seq experiments with few samples (trained on 2–16 samples per group, at least 4 per group recommended). It was trained once on simulated experiments, real GTEx backgrounds with planted effects, and real two-group cohorts with labels from held-out samples. Given a new dataset, it returns a posterior for every gene in a single forward pass, without fitting a model to that dataset.
 
 For every gene, PRESET reports
 
@@ -70,17 +70,6 @@ preset diagnose counts.tsv samples.tsv --condition group
 ## Tutorial
 
 [`tutorial/PRESET_tutorial.ipynb`](tutorial/PRESET_tutorial.ipynb) walks through an analysis step by step, following the sections of the paper: input data, the per-gene posterior, a DEG list with its expected false discoveries, and four checks against known truth (planted effects, effect sizes, outlier counts and the rest of the cohort). It uses a psoriasis cohort (GSE121212) that PRESET never saw during training (another psoriasis cohort, GSE268958, was among the training cohorts) and runs in a few minutes on a laptop CPU. It also shows the volcano plot, the gene embedding map and a pathway analysis.
-
-## Scope
-
-- Two groups, with one optional two-level batch column (`batch=` with values 0/1).
-- Trained on 2–16 samples per group; at least 4 per group are recommended. The ranking was evaluated up to 100 and the default calls from 4 to 50 samples per group.
-- The ranking targets changes of meaningful size ($|\log_2\mathrm{FC}| > \tau$). Changes below two-fold are recovered less often than by tests that define a DEG by FDR alone.
-- Calls (`rule="auto"`, the default) use a target-decoy FDR when the smaller group has fewer than 16 samples and the Bayesian FDR from 16. Decoy genes (real genes with their samples re-split so that true effects cancel) are scored together with the real genes in eight extra passes, and the cut-off is set by how many of them pass, counting one decoy more than observed as in knockoff+, so that a dataset in which nothing changes gets no calls; the shortest list that can be called at 5% has 10 genes. Decoys stand only for genes that do not change at all, so in large samples, where genes changed by less than $\tau$ make up a growing share of the false calls, the Bayesian FDR takes over. In pre-registered tests on effects planted into GTEx tissues used neither for training nor for setting the rule, the default kept the mean realized FDR at or below 7% for a 5% target from 4 to 50 samples per group; with permuted labels it called genes in at most 4% of datasets. Single datasets can still exceed the target, for example null data with outlying counts. The posterior columns come from a pass without decoys; the decoy passes only set the cut-off.
-- The calling rules were validated at the default $\tau = 0.5$. With $\tau = 1$ the target-decoy cut-off exceeded its target from 8 samples per group in our tests, so treat calls at other thresholds as approximate; the ranking and `p_de` are valid for any $\tau$.
-- `preset diagnose` flags unequal sequencing depth between the groups (|log2 size-factor ratio| > 0.3). Decoys move raw counts between samples, so there the target-decoy cut-off is conservative and may call too few genes.
-- Credible intervals are calibrated on average over genes, not for each gene. Posterior means of genes with a mean count below 50 are strongly shrunk; use the ranking for those genes.
-- Covariates and paired designs (`preset.io.build_covariates`) are experimental and were not evaluated.
 
 ## Reproducing the paper
 
