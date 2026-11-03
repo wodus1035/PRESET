@@ -155,6 +155,17 @@ def scored_power(d, col):
     return d[col].to_numpy(float) * d.n_pos_all.to_numpy(float) / d.n_pos.clip(lower=1).to_numpy(float)
 
 
+def fdr_excluding_small(d):
+    """SPsimSeq FDR as pre-registered: DE genes with true |log2FC| <= tau are not scored, so they leave both the numerator and the
+    denominator. op_fdr counts genes simulated without change over all calls and op_fdr_tau every gene with |log2FC| <= tau, so their
+    difference times n_called is the number of calls on those DE genes."""
+    nonde = d.op_fdr.to_numpy(float) * d.n_called.to_numpy(float)
+    small = (d.op_fdr_tau.to_numpy(float) - d.op_fdr.to_numpy(float)) * d.n_called.to_numpy(float)
+    assert np.allclose(nonde, np.round(nonde)) and np.allclose(small, np.round(small)), "call counts are not integers"
+    labelled = d.n_called.to_numpy(float) - np.round(small)
+    return np.where(labelled > 0, np.round(nonde) / np.maximum(labelled, 1), 0.0)
+
+
 # ---- Simulated (no rows on PRESET's own simulator: its truth is drawn from the training prior)
 p_old = first(f"{RES}/compcodeR_{T}{F}2/compcodeR_bench.csv")
 p_new = first(f"{RES}/compcodeR_{T}{PK}/compcodeR_bench.csv")
@@ -207,14 +218,16 @@ if p_sp:
     if "false4_top200_shrunk" in c:
         sh = c.method == "DESeq2 lfcThr"
         c.loc[sh, "false4_top200"] = c.loc[sh, "false4_top200_shrunk"]
-    # SPsimSeq has DE genes with 0 < |log2FC| <= tau; they count as false here, as in the paper (compcodeR has none)
-    c["power_scored"] = scored_power(c, "sweep_power_tau")
+    # as pre-registered: about 7% of the DE genes have true |log2FC| <= tau and are not scored (compcodeR has none);
+    # op_fdr_tau and sweep_power_tau count them as false instead (sensitivity analysis)
+    c["fdr_scored"] = fdr_excluding_small(c)
+    c["power_scored"] = scored_power(c, "sweep_power")
     add(
         SIM,
         "SPsimSeq",
         4,
         "FDR",
-        mean_wide(c, ["design", "rep"], "method", "op_fdr_tau", FAIR_DC, "design"),
+        mean_wide(c, ["design", "rep"], "method", "fdr_scored", FAIR_DC, "design"),
         "mean",
         None,
     )
