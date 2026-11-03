@@ -86,7 +86,7 @@ def boot_rows(wide, kind, better):
     return res, sig
 
 
-DAG = r"$^\dagger$"  # data sources that informed the training simulator (SEQC, GTEx)
+DAG = ""
 
 
 def add(section, dataset, npg, metric, wide=None, kind="mean", better=None, fmt="{:.2f}", nounc=()):
