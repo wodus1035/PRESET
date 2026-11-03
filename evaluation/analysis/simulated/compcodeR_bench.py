@@ -71,6 +71,9 @@ def one(tag):
     E = np.where(fc.expressed_mask(X))[0]
     S = X[E]
     t, p_, n_ = true[E], pos[E], neg[E]
+    # false as defined in the paper (true |log2FC| <= tau), so that DE genes with 0 < |log2FC| <= tau count as false;
+    # n_ (genes simulated without change) is kept for op_fdr, sweep_power and the false 4-fold counts
+    f_ = np.abs(t) <= A.tau
     b = np.zeros_like(cond)
     design, spc, rep = (
         tag.split("_")[0] + "_" + tag.split("_")[1] + "_" + tag.split("_")[2],
@@ -198,6 +201,10 @@ def one(tag):
                 ].sum()
             ),
         )
+        # sweep_power divides by every positive with a count (n_pos_all); n_pos counts those in the scored set
+        row["n_pos_all"] = int(p_.sum())
+        row["op_fdr_tau"] = float(f_[call].mean()) if call.any() else 0.0
+        row["sweep_power_tau"] = fc.sweep_power(order, p_, f_, 0.05)
         for k in KS:
             row[f"cat@{k}"] = float(len(set(order[:k]) & set(order_true[:k])) / k)
         # CAT by |log2FC|, unscored genes last

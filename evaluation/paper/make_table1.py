@@ -147,6 +147,14 @@ def with_tools(new, old, keys, tool_methods, check=("edgeR TREAT", "sweep_power"
 FAIR_DC = {"PRESET decoy": "PRESET", "edgeR TREAT": "edgeR", "DESeq2 lfcThr": "DESeq2", "limma treat": "limma"}
 TOOLS = ["edgeR TREAT", "DESeq2 lfcThr", "limma treat", "apeglm"]
 
+
+def scored_power(d, col):
+    """Power among the positives of the scored set (edgeR filterByExpr), as defined in the paper. compcodeR_bench.py divides by every
+    positive with a count (n_pos_all); the others have no score, are ranked last and never enter a list with a realized FDR of 5%."""
+    assert "n_pos_all" in d, "result file without n_pos_all; rerun simulated/compcodeR_bench.py"
+    return d[col].to_numpy(float) * d.n_pos_all.to_numpy(float) / d.n_pos.clip(lower=1).to_numpy(float)
+
+
 # ---- Simulated (no rows on PRESET's own simulator: its truth is drawn from the training prior)
 p_old = first(f"{RES}/compcodeR_{T}{F}2/compcodeR_bench.csv")
 p_new = first(f"{RES}/compcodeR_{T}{PK}/compcodeR_bench.csv")
@@ -160,6 +168,7 @@ if p_old and p_new:
     if "false4_top200_shrunk" in c:
         sh = c.method == "DESeq2 lfcThr"
         c.loc[sh, "false4_top200"] = c.loc[sh, "false4_top200_shrunk"]
+    c["power_scored"] = scored_power(c, "sweep_power")
     add(
         SIM,
         "compcodeR",
@@ -174,7 +183,7 @@ if p_old and p_new:
         "compcodeR",
         5,
         "Power",
-        mean_wide(c, ["design", "rep"], "method", "sweep_power", FAIR, "design"),
+        mean_wide(c, ["design", "rep"], "method", "power_scored", FAIR, "design"),
         "mean",
         "max",
     )
@@ -198,12 +207,14 @@ if p_sp:
     if "false4_top200_shrunk" in c:
         sh = c.method == "DESeq2 lfcThr"
         c.loc[sh, "false4_top200"] = c.loc[sh, "false4_top200_shrunk"]
+    # SPsimSeq has DE genes with 0 < |log2FC| <= tau; they count as false here, as in the paper (compcodeR has none)
+    c["power_scored"] = scored_power(c, "sweep_power_tau")
     add(
         SIM,
         "SPsimSeq",
         4,
         "FDR",
-        mean_wide(c, ["design", "rep"], "method", "op_fdr", FAIR_DC, "design"),
+        mean_wide(c, ["design", "rep"], "method", "op_fdr_tau", FAIR_DC, "design"),
         "mean",
         None,
     )
@@ -212,7 +223,7 @@ if p_sp:
         "SPsimSeq",
         4,
         "Power",
-        mean_wide(c, ["design", "rep"], "method", "sweep_power", FAIR, "design"),
+        mean_wide(c, ["design", "rep"], "method", "power_scored", FAIR, "design"),
         "mean",
         "max",
     )
