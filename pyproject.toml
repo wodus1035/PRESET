@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "preset"
 version = "1.0.1"
-description = "PRESET: differential expression with a prior learned across RNA-seq experiments (prior-fitted network)"
+description = "PRESET: Differential Expression Analysis of Bulk RNA-seq with a Prior-Fitted Network Trained Across Experiments"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Jaeyeon Jang" }, { name = "Inuk Jung" }]

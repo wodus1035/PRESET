@@ -1,6 +1,6 @@
 # PRESET
 
-**Differential expression with a prior learned across RNA-seq experiments.**
+**Differential Expression Analysis of Bulk RNA-seq with a Prior-Fitted Network Trained Across Experiments**
 
 PRESET is a prior-fitted network for two-group bulk RNA-seq experiments with few samples (trained on 2–16 samples per group, at least 4 per group recommended). It was trained once on simulated experiments, real GTEx backgrounds with planted effects, and real two-group cohorts with labels from held-out samples. Given a new dataset, it returns a posterior for every gene in a single forward pass, without fitting a model to that dataset.
 
@@ -77,4 +77,4 @@ The code that trained the released weights, with the commands of both training s
 
 ## Citation
 
-Jang J, Jung I. PRESET: differential expression with a prior learned across RNA-seq experiments. 2026 (in preparation).
+Jang J, Jung I. PRESET: Differential Expression Analysis of Bulk RNA-seq with a Prior-Fitted Network Trained Across Experiments. 2026 (in preparation).
